@@ -115,22 +115,27 @@ features_df = compute_features_fn(
 # COMMAND ----------
 # DBTITLE 1, Write computed features.
 
-from databricks import feature_store
+# from databricks import feature_store
 
-fs = feature_store.FeatureStoreClient()
+# fs = feature_store.FeatureStoreClient()
+
+from databricks.feature_engineering import FeatureEngineeringClient
+
+fe = FeatureEngineeringClient()
 
 
 # Create the feature table if it does not exist first.
 # Note that this is a no-op if a table with the same name and schema already exists.
-fs.create_table(
+fe.create_table(
     name=output_table_name,
-    primary_keys=[x.strip() for x in pk_columns.split(",")],
+    primary_keys=[x.strip() for x in pk_columns.split(",")] + 
+                 [t.strip() for t in ts_column.split(",")],
     timestamp_keys=[ts_column],
     df=features_df,
 )
 
 # Write the computed features dataframe.
-fs.write_table(
+fe.write_table(
     name=output_table_name,
     df=features_df,
     mode="merge",

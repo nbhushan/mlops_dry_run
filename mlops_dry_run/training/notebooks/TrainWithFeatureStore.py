@@ -53,7 +53,7 @@ dbutils.widgets.text(
 # MLflow experiment name.
 dbutils.widgets.text(
     "experiment_name",
-    f"/dev-mlops_dry_run-experiment-challenger",
+    f"/dev-mlops_dry_run-experiment",
     label="MLflow experiment name",
 )
 # Unity Catalog registered model name to use for the trained mode.
@@ -164,7 +164,8 @@ taxi_data.display()
 # COMMAND ----------
 # DBTITLE 1, Create FeatureLookups
 
-from databricks.feature_store import FeatureLookup
+# from databricks.feature_store import FeatureLookup
+from databricks.feature_engineering import FeatureLookup
 import mlflow
 
 pickup_features_table = dbutils.widgets.get("pickup_features_table")
@@ -194,7 +195,8 @@ dropoff_feature_lookups = [
 # COMMAND ----------
 # DBTITLE 1, Create Training Dataset
 
-from databricks import feature_store
+# from databricks import feature_store
+from databricks.feature_engineering import FeatureEngineeringClient
 
 # End any existing runs (in the case this notebook is being run for a second time)
 mlflow.end_run()
@@ -206,11 +208,12 @@ mlflow.start_run()
 # unless additional feature engineering was performed, exclude them to avoid training on them.
 exclude_columns = ["rounded_pickup_datetime", "rounded_dropoff_datetime"]
 
-fs = feature_store.FeatureStoreClient()
+# fs = feature_store.FeatureStoreClient()
+fe = FeatureEngineeringClient()
 
 # Create the training set that includes the raw input data merged with corresponding features from both feature tables
-training_set = fs.create_training_set(
-    taxi_data,
+training_set = fe.create_training_set(
+    df = taxi_data,
     feature_lookups=pickup_feature_lookups + dropoff_feature_lookups,
     label="fare_amount",
     exclude_columns=exclude_columns,
@@ -263,12 +266,20 @@ model = lgb.train(param, train_lgb_dataset, num_rounds)
 # DBTITLE 1, Log model and return output.
 
 # Log the trained model with MLflow and package it with feature lookup information.
-fs.log_model(
-    model,
+# fs.log_model(
+#     model,
+#     artifact_path="model_packaged",
+#     flavor=mlflow.lightgbm,
+#     training_set=training_set,
+#     registered_model_name=model_name,
+# )
+
+fe.log_model(
+    model = model,
     artifact_path="model_packaged",
     flavor=mlflow.lightgbm,
     training_set=training_set,
-    registered_model_name=model_name,
+    registered_model_name=model_name
 )
 
 # The returned model URI is needed by the model deployment notebook.
