@@ -23,7 +23,7 @@ common_permissions: &permissions
 resources:
   quality_monitors:
     mlops_dry_run_quality_monitor:
-      table_name: mlops_prod.mlops_dry_run.predictions
+      table_name: ${bundle.target}.mlops_dry_run.predictions
       # TODO: Update the output schema name as per your requirements
       output_schema_name: ${bundle.target}.mlops_dry_run
       # TODO: Update the below parameters as per your requirements
