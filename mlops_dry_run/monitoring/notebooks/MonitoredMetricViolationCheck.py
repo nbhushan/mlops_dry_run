@@ -16,7 +16,7 @@
 #
 # Name of the table that is currently being monitored
 dbutils.widgets.text(
-    "table_name_under_monitor", "dev.mlops_dry_run.predictions", label="Full (three-Level) table name"
+    "table_name_under_monitor", "mlops_prod.mlops_dry_run.predictions", label="Full (three-Level) table name"
 )
 # Metric to be used for threshold violation check
 dbutils.widgets.text(
