@@ -53,7 +53,7 @@ dbutils.widgets.text(
 # MLflow experiment name.
 dbutils.widgets.text(
     "experiment_name",
-    f"/dev-mlops_dry_run-experiment",
+    f"/dev-mlops_dry_run-experiment-challenger",
     label="MLflow experiment name",
 )
 # Unity Catalog registered model name to use for the trained mode.
@@ -254,7 +254,7 @@ train_lgb_dataset = lgb.Dataset(X_train, label=y_train.values)
 test_lgb_dataset = lgb.Dataset(X_test, label=y_test.values)
 
 param = {"num_leaves": 32, "objective": "regression", "metric": "rmse"}
-num_rounds = 50
+num_rounds = 200
 
 # Train a lightGBM model
 model = lgb.train(param, train_lgb_dataset, num_rounds)
