@@ -49,7 +49,7 @@ resources:
             notebook_path: ../monitoring/notebooks/MonitoredMetricViolationCheck.py
             base_parameters:
               env: ${bundle.target}
-              table_name_under_monitor: dev.mlops_dry_run.predictions
+              table_name_under_monitor: ${bundle.target}.mlops_dry_run.predictions
               # TODO: Update the metric to be monitored and violation threshold
               metric_to_monitor: root_mean_squared_error
               metric_violation_threshold: 100
