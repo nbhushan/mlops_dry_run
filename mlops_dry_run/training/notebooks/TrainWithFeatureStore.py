@@ -53,7 +53,7 @@ dbutils.widgets.text(
 # MLflow experiment name.
 dbutils.widgets.text(
     "experiment_name",
-    f"/dev-mlops_dry_run-experiment-challenger",
+    f"/dev-mlops_dry_run-experiment",
     label="MLflow experiment name",
 )
 # Unity Catalog registered model name to use for the trained mode.
