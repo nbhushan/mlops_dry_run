@@ -1,0 +1,43 @@
+# The name of the bundle. run `databricks bundle schema` to see the full bundle settings schema.
+bundle:
+  name: mlops_dry_run
+
+variables:
+  experiment_name:
+    description: Experiment name for the model training.
+    default: /Users/${workspace.current_user.userName}/${bundle.target}-mlops_dry_run-experiment
+  model_name:
+    description: Model name for the model training.
+    default: mlops_dry_run-model
+
+include:
+  # Resources folder contains ML artifact resources for the ML project that defines model and experiment
+  # And workflows resources for the ML project including model training -> validation -> deployment,
+  # feature engineering,  batch inference, quality monitoring, metric refresh, alerts and triggering retraining
+  # - ./resources/batch-inference-workflow-resource.yml
+  - ./resources/ml-artifacts-resource.yml
+  - ./resources/model-workflow-resource.yml
+  - ./resources/feature-engineering-workflow-resource.yml
+  # TODO: uncomment once monitoring inference table has been created
+  # - ./resources/monitoring-resource.yml
+
+# Deployment Target specific values for workspace
+targets:
+  mlops_dev:  # UC Catalog Name 
+    default: true
+    workspace:
+      # TODO: add dev workspace URL
+      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com/
+
+  mlops_staging:
+    workspace:
+      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+
+  mlops_prod:
+    workspace:
+      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+
+  mlops_test:
+    workspace:
+      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+
