@@ -30,7 +30,7 @@ resources:
       assets_dir: /Users/${workspace.current_user.userName}/databricks_lakehouse_monitoring
       inference_log:
         granularities: [1 day]
-        model_id_col: model_id
+        model_id_col: model_version
         prediction_col: prediction
         #label_col: fare
         problem_type: PROBLEM_TYPE_REGRESSION
