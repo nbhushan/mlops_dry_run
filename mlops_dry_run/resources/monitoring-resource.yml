@@ -2,13 +2,18 @@
 # The regression monitor defined here works OOB with this example regression notebook: https://docs.databricks.com/_extras/notebooks/source/monitoring/regression-monitor.html
 # NOTE: Monitoring only works on Unity Catalog tables.
 
-new_cluster: &new_cluster
-  new_cluster:
-    num_workers: 3
-    spark_version: 13.3.x-cpu-ml-scala2.12
-    node_type_id: i3.xlarge
-    custom_tags:
-      clusterSource: mlops-stacks_0.4
+variables:
+  my_cluster_id:
+    description: An existing all-purpose cluster
+    default: 0626-131452-469yt9ix
+
+# new_cluster: &new_cluster
+#   new_cluster:
+#     num_workers: 3
+#     spark_version: 13.3.x-cpu-ml-scala2.12
+#     node_type_id: i3.xlarge
+#     custom_tags:
+#       clusterSource: mlops-stacks_0.4
 
 common_permissions: &permissions
   permissions:
@@ -18,7 +23,7 @@ common_permissions: &permissions
 resources:
   quality_monitors:
     mlops_dry_run_quality_monitor:
-      table_name: dev.mlops_dry_run.predictions
+      table_name: prod.mlops_dry_run.predictions
       # TODO: Update the output schema name as per your requirements
       output_schema_name: ${bundle.target}.mlops_dry_run
       # TODO: Update the below parameters as per your requirements
@@ -38,7 +43,8 @@ resources:
       name: ${bundle.target}-mlops_dry_run-monitoring-retraining-job
       tasks:
         - task_key: monitored_metric_violation_check
-          <<: *new_cluster
+          existing_cluster_id: ${var.my_cluster_id}
+          # job_cluster_key: write_feature_table_job_cluster
           notebook_task:
             notebook_path: ../monitoring/notebooks/MonitoredMetricViolationCheck.py
             base_parameters:
@@ -53,6 +59,7 @@ resources:
               git_source_info: url:${bundle.git.origin_url}; branch:${bundle.git.branch}; commit:${bundle.git.commit}
 
         - task_key: is_metric_violated
+          # job_cluster_key: write_feature_table_job_cluster
           depends_on:
             - task_key: monitored_metric_violation_check
           condition_task:
