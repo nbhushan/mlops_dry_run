@@ -20,6 +20,13 @@ common_permissions: &permissions
     - level: CAN_VIEW
       group_name: users
 
+# Allow users to execute models in Unity Catalog
+grants: &grants
+  grants:
+    - privileges:
+        - EXECUTE
+      principal: account users
+
 resources:
   quality_monitors:
     mlops_dry_run_quality_monitor:
@@ -35,9 +42,8 @@ resources:
         #label_col: fare
         problem_type: PROBLEM_TYPE_REGRESSION
         timestamp_col: inference_timestamp
-      schedule:
-        quartz_cron_expression: 0 0 8 * * ? # Run Every day at 8am
-        timezone_id: UTC
+        comment: Created profile and drift tables in Unity Catalog for the "mlops_dry_run" ML Project for ${bundle.target} deployment target.
+        <<: *grants
   # jobs:
   #   retraining_job:
   #     name: ${bundle.target}-mlops_dry_run-monitoring-retraining-job
