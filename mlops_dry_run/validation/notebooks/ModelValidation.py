@@ -67,7 +67,8 @@ dbutils.widgets.text(
 )
 dbutils.widgets.dropdown("run_mode", "disabled", ["disabled", "dry_run", "enabled"], "Run Mode")
 dbutils.widgets.dropdown("enable_baseline_comparison", "false", ["true", "false"], "Enable Baseline Comparison")
-dbutils.widgets.text("validation_input", "SELECT * FROM delta.`dbfs:/databricks-datasets/nyctaxi-with-zipcodes/subsampled`", "Validation Input")
+#dbutils.widgets.text("validation_input", "SELECT * FROM delta.`dbfs:/databricks-datasets/nyctaxi-with-zipcodes/subsampled`", "Validation Input")
+dbutils.widgets.text("validation_input", "mlops_prod.mlops_dry_run.validation_input", "Validation Input")
 
 dbutils.widgets.text("model_type", "regressor", "Model Type")
 dbutils.widgets.text("targets", "fare_amount", "Targets")
@@ -146,7 +147,9 @@ enable_baseline_comparison = enable_baseline_comparison == "true"
 
 validation_input = dbutils.widgets.get("validation_input")
 assert validation_input
-data = spark.sql(validation_input)
+
+#data = spark.sql(validation_input)
+data = spark.table(validation_input)
 
 model_type = dbutils.widgets.get("model_type")
 targets = dbutils.widgets.get("targets")
@@ -232,10 +235,22 @@ with mlflow.start_run(
                 )
     mlflow.log_artifact(validation_thresholds_file)
 
+    # Temporaty fix: MLFLOW evaluate can't load FS model, ust a lambda functions instead
+
+    from databricks.feature_engineering import FeatureEngineeringClient
+
+    def get_fe_model_predictions(data):
+        fe = FeatureEngineeringClient()
+        return fe.score_batch(
+            model_uri = model_uri, 
+            df = spark.createDataFrame(data)
+        ).select('prediction').toPandas()
+
     try:
         eval_result = mlflow.evaluate(
-            model=model_uri,
-            data=data,
+            #model=model_uri,
+            get_fe_model_predictions,
+            data,
             targets=targets,
             model_type=model_type,
             evaluators=evaluators,
