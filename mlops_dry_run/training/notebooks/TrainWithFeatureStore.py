@@ -239,6 +239,7 @@ import lightgbm as lgb
 from sklearn.model_selection import train_test_split
 import mlflow.lightgbm
 from mlflow.tracking import MlflowClient
+from mlflow.models.signature import infer_signature, set_signature
 
 
 features_and_label = training_df.columns
@@ -252,15 +253,29 @@ X_test = test.drop(["fare_amount"], axis=1)
 y_train = train.fare_amount
 y_test = test.fare_amount
 
-mlflow.lightgbm.autolog()
-train_lgb_dataset = lgb.Dataset(X_train, label=y_train.values)
-test_lgb_dataset = lgb.Dataset(X_test, label=y_test.values)
 
-param = {"num_leaves": 32, "objective": "regression", "metric": "rmse"}
-num_rounds = 10
+mlflow.lightgbm.autolog(log_model_signatures=True)
+
+train_lgb_dataset = lgb.Dataset(X_train, label=y_train.values)
+dev_lgb_dataset = lgb.Dataset(X_test, label=y_test.values)
+
+params = {
+    'boosting_type': 'gbdt',
+    'objective': 'regression',
+    'metric': {'l2', 'l1'},
+    'num_leaves': 31,
+    'learning_rate': 0.05,
+    'feature_fraction': 0.9,
+    'bagging_fraction': 0.8,
+    'bagging_freq': 5,
+    'verbose': 0
+}
+
+
+num_rounds = 500
 
 # Train a lightGBM model
-model = lgb.train(param, train_lgb_dataset, num_rounds)
+model = lgb.train(params, train_lgb_dataset,  num_rounds, valid_sets=dev_lgb_dataset)
 
 # COMMAND ----------
 # DBTITLE 1, Log model and return output.

@@ -19,7 +19,7 @@ def deploy(model_uri, env):
     _, model_name, version = model_uri.split("/")
     client = MlflowClient(registry_uri="databricks-uc")
     mv = client.get_model_version(model_name, version)
-    # target_alias = "Champion"
+    target_alias = "Champion"
     target_alias = "Challenger"
     if target_alias not in mv.aliases:
         client.set_registered_model_alias(
