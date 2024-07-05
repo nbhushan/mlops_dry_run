@@ -5,7 +5,7 @@
 variables:
   my_cluster_id:
     description: An existing all-purpose cluster
-    default: 0626-131452-469yt9ix
+    default: 0705-023811-29mu0456
 
 # new_cluster: &new_cluster
 #   new_cluster:
