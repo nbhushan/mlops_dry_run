@@ -103,6 +103,7 @@ raw_data = spark.read.format("delta").load(input_table_path)
 from importlib import import_module
 
 mod = import_module(features_module)
+
 compute_features_fn = getattr(mod, "compute_features_fn")
 
 features_df = compute_features_fn(
