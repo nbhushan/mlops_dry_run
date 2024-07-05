@@ -5,7 +5,7 @@
 variables:
   my_cluster_id:
     description: An existing all-purpose cluster
-    default: 0626-131452-469yt9ix
+    default: 0705-023811-29mu0456
 
 # new_cluster: &new_cluster
 #   new_cluster:
@@ -21,11 +21,11 @@ common_permissions: &permissions
       group_name: users
 
 # Allow users to execute models in Unity Catalog
-grants: &grants
-  grants:
-    - privileges:
-        - EXECUTE
-      principal: account users
+# grants: &grants
+#   grants:
+#     - privileges:
+#         - EXECUTE
+#       principal: account users
 
 resources:
   quality_monitors:
@@ -42,8 +42,8 @@ resources:
         #label_col: fare
         problem_type: PROBLEM_TYPE_REGRESSION
         timestamp_col: inference_timestamp
-        comment: Created profile and drift tables in Unity Catalog for the "mlops_dry_run" ML Project for ${bundle.target} deployment target.
-        <<: *grants
+  #      comment: Created profile and drift tables in Unity Catalog for the "mlops_dry_run" ML Project for ${bundle.target} deployment target.
+  #      <<: *grants
   # jobs:
   #   retraining_job:
   #     name: ${bundle.target}-mlops_dry_run-monitoring-retraining-job
