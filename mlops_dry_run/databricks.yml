@@ -20,7 +20,9 @@ include:
   - ./resources/feature-engineering-workflow-resource.yml
   - ./resources/model-workflow-resource.yml
   - ./resources/ml-artifacts-resource.yml
-  - ./resources/batch-inference-workflow-resource.yml
+
+  # TODO: uncomment once feature store for inference has been created
+#  - ./resources/batch-inference-workflow-resource.yml
 
   # TODO: uncomment once monitoring inference table has been created
   # - ./resources/monitoring-resource.yml
@@ -30,7 +32,6 @@ targets:
   dev:  # UC Catalog Name 
     default: true
     workspace:
-      # TODO: add dev workspace URL
       host: https://adb-4369119731673015.15.azuredatabricks.net/
 
   staging:
