@@ -1,6 +1,6 @@
 {
   "input_root_dir": "mlops_dry_run",
-  "input_cloud": "aws",
+  "input_cloud": "azure",
   "input_cicd_platform": "github_actions",
   "input_default_branch": "main",
   "input_release_branch": "release",
