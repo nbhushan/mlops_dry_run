@@ -1,15 +1,15 @@
-variables:
-  my_cluster_id:
-    description: An existing all-purpose cluster
-    default: 0705-023811-29mu0456
+# variables:
+#   my_cluster_id:
+#     description: An existing all-purpose cluster
+#     default: 0705-023811-29mu0456
 
-# new_cluster: &new_cluster
-#   new_cluster:
-#     num_workers: 3
-#     spark_version: 13.3.x-cpu-ml-scala2.12
-#     node_type_id: i3.xlarge
-#     custom_tags:
-#       clusterSource: mlops-stacks_0.4
+new_cluster: &new_cluster
+  new_cluster:
+    num_workers: 3
+    spark_version: 13.3.x-cpu-ml-scala2.12
+    node_type_id: Standard_DS3_v2
+    custom_tags:
+      clusterSource: mlops-stacks_0.4     
 
 common_permissions: &permissions
   permissions:
@@ -20,13 +20,13 @@ resources:
   jobs:
     model_training_job:
       name: ${bundle.target}-mlops_dry_run-model-training-job
-      # job_clusters:
-      #   - job_cluster_key: model_training_job_cluster
-      #     <<: *new_cluster
+      job_clusters:
+        - job_cluster_key: model_training_job_cluster
+          <<: *new_cluster
       tasks:
         - task_key: Train
-          existing_cluster_id: ${var.my_cluster_id}
-          # job_cluster_key: write_feature_table_job_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          job_cluster_key: model_training_job_cluster
           notebook_task:
             notebook_path: ../training/notebooks/TrainWithFeatureStore.py
             base_parameters:
@@ -40,8 +40,8 @@ resources:
               # git source information of current ML resource deployment. It will be persisted as part of the workflow run
               git_source_info: url:${bundle.git.origin_url}; branch:${bundle.git.branch}; commit:${bundle.git.commit}
         - task_key: ModelValidation
-          existing_cluster_id: ${var.my_cluster_id}
-          # job_cluster_key: write_feature_table_job_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          job_cluster_key: model_training_job_cluster
           depends_on:
             - task_key: Train
           notebook_task:
@@ -56,7 +56,7 @@ resources:
               # `enabled`  : Run the model validation notebook. Move model to Production stage only if all model validation
               #               rules are passing.
               # TODO: update run_mode
-              run_mode: enabled
+              run_mode: dry_run
               # Whether to load the current registered "Production" stage model as baseline.
               # Baseline model is a requirement for relative change and absolute change validation thresholds.
               # TODO: update enable_baseline_comparison
@@ -84,8 +84,8 @@ resources:
               # git source information of current ML resource deployment. It will be persisted as part of the workflow run
               git_source_info: url:${bundle.git.origin_url}; branch:${bundle.git.branch}; commit:${bundle.git.commit}
         - task_key: ModelDeployment
-          existing_cluster_id: ${var.my_cluster_id}
-          # job_cluster_key: write_feature_table_job_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          job_cluster_key: model_training_job_cluster
           depends_on:
             - task_key: ModelValidation
           notebook_task:

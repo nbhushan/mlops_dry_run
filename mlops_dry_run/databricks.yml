@@ -10,34 +10,39 @@ variables:
     description: Model name for the model training.
     default: mlops_dry_run-model
 
+run_as:
+  service_principal_name: c36677ea-514f-4af5-beac-15a27e8d2db5
+
 include:
   # Resources folder contains ML artifact resources for the ML project that defines model and experiment
   # And workflows resources for the ML project including model training -> validation -> deployment,
   # feature engineering,  batch inference, quality monitoring, metric refresh, alerts and triggering retraining
-  - ./resources/batch-inference-workflow-resource.yml
-  - ./resources/ml-artifacts-resource.yml
-  - ./resources/model-workflow-resource.yml
   - ./resources/feature-engineering-workflow-resource.yml
+  - ./resources/model-workflow-resource.yml
+  - ./resources/ml-artifacts-resource.yml
+  - ./resources/batch-inference-workflow-resource.yml
+
   # TODO: uncomment once monitoring inference table has been created
-  - ./resources/monitoring-resource.yml
+  # - ./resources/monitoring-resource.yml
 
 # Deployment Target specific values for workspace
 targets:
-  mlops_dev:  # UC Catalog Name 
+  dev:  # UC Catalog Name 
     default: true
     workspace:
       # TODO: add dev workspace URL
-      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com/
+      host: https://adb-4369119731673015.15.azuredatabricks.net/
 
-  mlops_staging:
+  staging:
     workspace:
-      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+      host: https://adb-1953183030701099.19.azuredatabricks.net/
 
-  mlops_prod:
+  prod:
     workspace:
-      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+      host: https://adb-467938697631573.13.azuredatabricks.net/
 
-  mlops_test:
+  test:
     workspace:
-      host: https://dbc-8f214e2f-9ce9.cloud.databricks.com
+      host: https://adb-1953183030701099.19.azuredatabricks.net/
+
 

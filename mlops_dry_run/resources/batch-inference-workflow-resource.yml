@@ -1,15 +1,15 @@
-variables:
-  my_cluster_id:
-    description: An existing all-purpose cluster
-    default: 0705-023811-29mu0456
+# variables:
+#   my_cluster_id:
+#     description: An existing all-purpose cluster
+#     default: 0705-023811-29mu0456
 
-# new_cluster: &new_cluster
-#   new_cluster:
-#     num_workers: 3
-#     spark_version: 13.3.x-cpu-ml-scala2.12
-#     node_type_id: i3.xlarge
-#     custom_tags:
-#       clusterSource: mlops-stacks_0.4
+new_cluster: &new_cluster
+  new_cluster:
+    num_workers: 3
+    spark_version: 13.3.x-cpu-ml-scala2.12
+    node_type_id: Standard_DS3_v2
+    custom_tags:
+      clusterSource: mlops-stacks_0.4   
 
 common_permissions: &permissions
   permissions:
@@ -22,8 +22,8 @@ resources:
       name: ${bundle.target}-mlops_dry_run-batch-inference-job
       tasks:
         - task_key: batch_inference_job
-          existing_cluster_id: ${var.my_cluster_id}
-          # <<: *new_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          <<: *new_cluster
           notebook_task:
             notebook_path: ../deployment/batch_inference/notebooks/BatchInference.py
             base_parameters:

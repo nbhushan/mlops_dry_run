@@ -1,15 +1,15 @@
-variables:
-  my_cluster_id:
-    description: An existing all-purpose cluster
-    default: 0705-023811-29mu0456
+# variables:
+#   my_cluster_id:
+#     description: An existing all-purpose cluster
+#     default: 0705-023811-29mu0456
 
-# new_cluster: &new_cluster
-#   new_cluster:
-#     num_workers: 3
-#     spark_version: 13.3.x-cpu-ml-scala2.12
-#     node_type_id: i3.xlarge
-#     custom_tags:
-#       clusterSource: mlops-stacks_0.4
+new_cluster: &new_cluster
+  new_cluster:
+    num_workers: 3
+    spark_version: 13.3.x-cpu-ml-scala2.12
+    node_type_id: Standard_DS3_v2
+    custom_tags:
+      clusterSource: mlops-stacks_0.4
 
 common_permissions: &permissions
   permissions:
@@ -20,13 +20,13 @@ resources:
   jobs:
     write_feature_table_job:
       name: ${bundle.target}-mlops_dry_run-write-feature-table-job
-      # job_clusters:
-      #   - job_cluster_key: write_feature_table_job_cluster
-      #     <<: *new_cluster
+      job_clusters:
+        - job_cluster_key: write_feature_table_job_cluster
+          <<: *new_cluster
       tasks:
         - task_key: PickupFeatures
-          existing_cluster_id: ${var.my_cluster_id}
-          # job_cluster_key: write_feature_table_job_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          job_cluster_key: write_feature_table_job_cluster
           notebook_task:
             notebook_path: ../feature_engineering/notebooks/GenerateAndWriteFeatures.py
             base_parameters:
@@ -42,8 +42,8 @@ resources:
               # git source information of current ML resource deployment. It will be persisted as part of the workflow run
               git_source_info: url:${bundle.git.origin_url}; branch:${bundle.git.branch}; commit:${bundle.git.commit}
         - task_key: DropoffFeatures
-          existing_cluster_id: ${var.my_cluster_id}
-          # job_cluster_key: write_feature_table_job_cluster
+          # existing_cluster_id: ${var.my_cluster_id}
+          job_cluster_key: write_feature_table_job_cluster
           notebook_task:
             notebook_path: ../feature_engineering/notebooks/GenerateAndWriteFeatures.py
             base_parameters:
@@ -68,4 +68,3 @@ resources:
       #  email_notifications:
       #    on_failure:
       #      - nitin.bhushan@databricks.com
-      #      - second@company.com
