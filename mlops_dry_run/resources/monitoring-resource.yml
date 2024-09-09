@@ -2,18 +2,19 @@
 # The regression monitor defined here works OOB with this example regression notebook: https://docs.databricks.com/_extras/notebooks/source/monitoring/regression-monitor.html
 # NOTE: Monitoring only works on Unity Catalog tables.
 
-variables:
-  my_cluster_id:
-    description: An existing all-purpose cluster
-    default: 0705-023811-29mu0456
+# variables:
+#   my_cluster_id:
+#     description: An existing all-purpose cluster
+#     default: 0705-023811-29mu0456
 
-# new_cluster: &new_cluster
-#   new_cluster:
-#     num_workers: 3
-#     spark_version: 13.3.x-cpu-ml-scala2.12
-#     node_type_id: i3.xlarge
-#     custom_tags:
-#       clusterSource: mlops-stacks_0.4
+new_cluster: &new_cluster
+  new_cluster:
+    num_workers: 0
+    spark_version: 13.3.x-cpu-ml-scala2.12
+    node_type_id: Standard_DS3_v2
+    custom_tags:
+      clusterSource: mlops-stacks_0.4
+      ResourceClass: SingleNode      
 
 common_permissions: &permissions
   permissions:
