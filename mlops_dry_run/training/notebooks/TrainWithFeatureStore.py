@@ -272,7 +272,7 @@ params = {
 }
 
 
-num_rounds = 500
+num_rounds = 1000
 
 # Train a lightGBM model
 model = lgb.train(params, train_lgb_dataset,  num_rounds, valid_sets=dev_lgb_dataset)
